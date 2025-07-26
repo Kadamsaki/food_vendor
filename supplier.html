@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sanchay - Supplier Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Card Animations */
+    .dashboard-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+      transition: left 0.6s;
+    }
+
+    .dashboard-card:hover::before {
+      left: 100%;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(34, 197, 94, 0.15);
+    }
+
+    /* Consistent Button Styling */
+    .action-button {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+      text-transform: none;
+      letter-spacing: 0.025em;
+    }
+
+    .action-button:hover {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+    }
+
+    .action-button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+    }
+
+    .action-button i {
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    /* Profile Card Animation */
+    .profile-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+      border: 1px solid rgba(34, 197, 94, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px rgba(34, 197, 94, 0.1);
+    }
+
+    /* Gradient animations */
+    .gradient-text {
+      background: linear-gradient(45deg, #16a34a, #22c55e, #4ade80);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Scroll animations */
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .scroll-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Badge animation */
+    .badge-pulse {
+      animation: badgePulse 2s infinite;
+    }
+
+    @keyframes badgePulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    /* Enhanced Icon Styling */
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      width: 90%;
+      max-width: 500px;
+      transform: scale(0.9);
+      animation: modalSlideIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalSlideIn {
+      to { 
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Notification styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    /* Enhanced card shadows */
+    .dashboard-card {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-green-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white px-6 py-4 shadow-xl relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+    <div class="flex items-center justify-between relative max-w-7xl mx-auto">
+      <div class="flex items-center space-x-4">
+        <h1 class="text-2xl font-bold tracking-wide gradient-text bg-white bg-clip-text">
+          <i class="fas fa-store mr-2"></i>Sanchay
+        </h1>
+        <span class="text-sm bg-white/20 px-3 py-1 rounded-full">Supplier Portal</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="notificationBtn" class="relative p-2 hover:bg-white/20 rounded-full transition-colors">
+          <i class="fas fa-bell text-lg"></i>
+          <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-5 h-5 flex items-center justify-center badge-pulse hidden">0</span>
+        </button>
+        <button onclick="openProfileModal()" class="flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-colors">
+          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+            <i class="fas fa-user text-gray-600"></i>
+          </div>
+          <span class="text-sm">Profile</span>
+        </button>
+        <button onclick="logout()" class="bg-white text-green-700 px-4 py-2 rounded-full hover:bg-green-100 transition duration-300 font-medium">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-green-50 via-white to-green-100 py-16 px-6 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-full opacity-5">
+      <div class="absolute top-10 left-10 w-32 h-32 bg-green-400 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-40 h-40 bg-green-300 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto relative">
+      <div class="text-center scroll-animate">
+        <div class="float-animation mb-6">
+          <i class="fas fa-user-tie text-6xl text-green-600"></i>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 gradient-text">
+          Welcome to Your Dashboard
+        </h2>
+        <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          Manage your inventory, process orders, and grow your business with our comprehensive supplier tools.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard -->
+  <main class="py-12 px-6 max-w-7xl mx-auto">
+    
+    <!-- Primary Action Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+
+      <!-- Manage Listings -->
+      <div class="dashboard-card bg-white rounded-2xl p-8 scroll-animate">
+        <div class="text-center mb-6">
+          <div class="feature-icon bg-green-100 text-green-600 mx-auto">
+            <i class="fas fa-list-alt"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">My Products</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Add new products, update prices, and manage your stock. Keep track of what's selling and what's in storage.
+        </p>
+        <button onclick="navigateTo('products')" class="action-button">
+          <i class="fas fa-arrow-right"></i>Manage Products
+        </button>
+      </div>
+
+      <!-- View Orders -->
+      <div class="dashboard-card bg-white rounded-2xl p-8 scroll-animate">
+        <div class="text-center mb-6">
+          <div class="feature-icon bg-green-100 text-green-600 mx-auto">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">New Orders</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          See all new orders from customers. Accept orders, check delivery details, and update order status.
+        </p>
+        <button onclick="navigateTo('orders')" class="action-button">
+          <i class="fas fa-eye"></i>Check Orders
+        </button>
+      </div>
+
+      <!-- My Status -->
+      <div class="dashboard-card bg-white rounded-2xl p-8 scroll-animate">
+        <div class="text-center mb-6">
+          <div class="feature-icon bg-green-100 text-green-600 mx-auto">
+            <i class="fas fa-chart-line"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">My Status</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          View your business performance, order statistics, and overall progress as a supplier on the platform.
+        </p>
+        <button onclick="navigateTo('status')" class="action-button">
+          <i class="fas fa-chart-bar"></i>View My Status
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Secondary Features Grid - Centered Layout -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+
+      <!-- Delivery Management -->
+      <div class="dashboard-card bg-white rounded-2xl p-8 scroll-animate">
+        <div class="text-center mb-6">
+          <div class="feature-icon bg-green-100 text-green-600 mx-auto">
+            <i class="fas fa-truck"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Delivery Tracking</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Track all your deliveries in one place. See which orders are packed, shipped, or delivered to customers.
+        </p>
+        <button onclick="navigateTo('deliveries')" class="action-button">
+          <i class="fas fa-route"></i>Track Deliveries
+        </button>
+      </div>
+
+      <!-- Communication Center -->
+      <div class="dashboard-card bg-white rounded-2xl p-8 scroll-animate">
+        <div class="text-center mb-6">
+          <div class="feature-icon bg-green-100 text-green-600 mx-auto">
+            <i class="fas fa-comments"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Customer Chat</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Chat directly with your customers. Answer questions, solve problems, and build good relationships.
+        </p>
+        <button onclick="navigateTo('chat')" class="action-button">
+          <i class="fas fa-message"></i>Open Chat
+        </button>
+      </div>
+
+    </section>
+
+    </section>
+  </main>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+    <div class="modal-content">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-gray-800">
+          <i class="fas fa-user-circle mr-2 text-green-600"></i>My Profile
+        </h3>
+        <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Profile Setup Form -->
+        <div class="text-center">
+          <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <i class="fas fa-camera text-gray-400 text-2xl"></i>
+          </div>
+          <button class="text-green-600 hover:text-green-700 font-medium">
+            <i class="fas fa-upload mr-2"></i>Add Profile Photo
+          </button>
+        </div>
+
+        <!-- Profile Information Form -->
+        <form class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+            <input type="text" placeholder="Enter your business name" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input type="tel" placeholder="Enter your phone number" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Shop Address</label>
+            <textarea placeholder="Enter your shop address" rows="3" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">What do you sell?</label>
+            <select class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500">
+              <option value="">Choose what you sell</option>
+              <option value="wholesale">Wholesale Products</option>
+              <option value="manufacturer">I make products</option>
+              <option value="distributor">I distribute products</option>
+              <option value="retailer">Retail Shop</option>
+            </select>
+          </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-3 pt-4">
+          <button class="flex-1 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition font-medium">
+            <i class="fas fa-save mr-2"></i>Save Details
+          </button>
+          <button onclick="closeProfileModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl hover:bg-gray-300 transition font-medium">
+            <i class="fas fa-times mr-2"></i>Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-green-700 via-green-800 to-green-900 text-white text-center py-8 mt-16 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+    <div class="relative max-w-7xl mx-auto px-6">
+      <p class="text-lg font-medium">&copy; 2025 <strong>Sanchay</strong></p>
+      <p class="text-sm mt-2 text-green-200">Empowering suppliers across India with technology</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Scroll animation observer
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Profile Modal Functions
+    function openProfileModal() {
+      document.getElementById('profileModal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profileModal');
+      modal.style.animation = 'fadeOut 0.3s ease forwards';
+      setTimeout(() => {
+        modal.classList.remove('show');
+        modal.style.animation = '';
+        document.body.style.overflow = 'auto';
+      }, 300);
+    }
+
+    function closeModalOnOutsideClick(event) {
+      if (event.target === document.getElementById('profileModal')) {
+        closeProfileModal();
+      }
+    }
+
+    // Navigation Functions
+    function navigateTo(section) {
+      const sectionNames = {
+        'products': 'My Products',
+        'orders': 'New Orders',
+        'status': 'My Status',
+        'deliveries': 'Delivery Tracking',
+        'chat': 'Customer Chat'
+      };
+      
+      showNotification(`Opening ${sectionNames[section]}...`, 'info');
+      // Simulate navigation delay
+      setTimeout(() => {
+        showNotification(`${sectionNames[section]} is ready to use!`, 'success');
+      }, 1500);
+    }
+
+    // Notification System
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification px-6 py-4 rounded-lg shadow-lg max-w-sm ${
+        type === 'success' ? 'bg-green-500 text-white' : 
+        type === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+      }`;
+      
+      notification.innerHTML = `
+        <div class="flex items-start">
+          <i class="fas ${
+            type === 'success' ? 'fa-check-circle' : 
+            type === 'error' ? 'fa-exclamation-circle' : 
+            'fa-info-circle'
+          } mr-3 mt-1"></i>
+          <div class="flex-1">
+            <p class="text-sm font-medium">${message}</p>
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white/70 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.remove();
+            }
+          }, 300);
+        }
+      }, 5000);
+    }
+
+    // Logout Function
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        showNotification('Logging out...', 'info');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeProfileModal();
+      }
+    });
+
+    // Initialize dashboard
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        showNotification('Welcome to your supplier dashboard!', 'success');
+      }, 1000);
+    });
+
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+  </script>
+</body>
+</html>

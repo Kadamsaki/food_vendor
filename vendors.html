@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanchay - Vendor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Card Animations */
+    .feature-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(34, 197, 94, 0.1);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.08), transparent);
+      transition: left 0.6s;
+    }
+
+    .feature-card:hover::before {
+      left: 100%;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 50px -12px rgba(34, 197, 94, 0.25);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    /* Icon Animations */
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Button Animations */
+    .action-link {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+      cursor: pointer;
+      border: none;
+    }
+
+    .action-link:hover {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .action-link i {
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .action-link:hover i {
+      transform: translateX(4px);
+    }
+
+    /* Gradient Text Animation */
+    .gradient-text {
+      background: linear-gradient(45deg, #16a34a, #22c55e, #4ade80);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Scroll Animations */
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .scroll-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Navbar Animation */
+    .navbar-glow {
+      background: linear-gradient(135deg, #059669, #10b981, #34d399);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .navbar-glow::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Header Background Animation */
+    .header-bg {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%2334d399" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%2316a34a" opacity="0.1"/><circle cx="75" cy="25" r="1" fill="%2322c55e" opacity="0.1"/><circle cx="25" cy="75" r="1" fill="%2334d399" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+      opacity: 0.5;
+    }
+
+    /* Notification Animation */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    /* Loading state */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid #16a34a;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Hidden state for dynamic content */
+    .hidden {
+      display: none;
+    }
+
+    /* Stats card styling */
+    .stats-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid rgba(34, 197, 94, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .stats-card:hover {
+      border-color: rgba(34, 197, 94, 0.3);
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-green-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="navbar-glow text-white px-6 py-4 shadow-xl relative">
+    <div class="flex items-center justify-between relative max-w-7xl mx-auto">
+      <div class="flex items-center space-x-4">
+        <div class="float-animation">
+          <i class="fas fa-store text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold tracking-wide">Sanchay</h1>
+        <span class="text-sm bg-white/20 px-3 py-1 rounded-full">Vendor Portal</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button id="notificationBtn" class="relative p-2 hover:bg-white/20 rounded-full transition-colors">
+          <i class="fas fa-bell text-lg"></i>
+          <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+        </button>
+        <button onclick="logout()" class="bg-white text-green-700 px-4 py-2 rounded-full hover:bg-green-100 transition duration-300 font-medium">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="header-bg text-green-900 py-16 px-6 text-center shadow-lg relative">
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="scroll-animate">
+        <div class="float-animation mb-6">
+          <i class="fas fa-user-tie text-6xl text-green-600"></i>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+          Welcome to Sanchay
+        </h2>
+        <p class="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
+          Your comprehensive platform for supplier management and procurement excellence.
+        </p>
+        
+        <!-- Dynamic Stats Section -->
+        <div id="statsSection" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto hidden">
+          <div class="stats-card rounded-2xl p-6">
+            <div id="totalOrders" class="text-3xl font-bold text-green-600">0</div>
+            <div class="text-sm text-gray-600">Total Orders</div>
+          </div>
+          <div class="stats-card rounded-2xl p-6">
+            <div id="activeSuppliers" class="text-3xl font-bold text-green-600">0</div>
+            <div class="text-sm text-gray-600">Active Suppliers</div>
+          </div>
+          <div class="stats-card rounded-2xl p-6">
+            <div id="monthlyVolume" class="text-3xl font-bold text-green-600">₹0</div>
+            <div class="text-sm text-gray-600">This Month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="p-6 max-w-6xl mx-auto">
+    
+    <!-- Primary Features - First Row -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+
+      <!-- Browse Suppliers -->
+      <div class="feature-card rounded-2xl p-8 scroll-animate">
+        <div class="text-center">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Browse Suppliers</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Discover verified suppliers in your area. Search by category, ratings, and location to find the right business partners.
+        </p>
+        <div class="text-center">
+          <button class="action-link" onclick="navigateToSuppliers()">
+            Find Suppliers <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Place New Order -->
+      <div class="feature-card rounded-2xl p-8 scroll-animate">
+        <div class="text-center">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Create Order</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Submit purchase requests and manage your procurement workflow efficiently through our streamlined ordering system.
+        </p>
+        <div class="text-center">
+          <button class="action-link" onclick="startOrderProcess()">
+            New Order <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div class="feature-card rounded-2xl p-8 scroll-animate">
+        <div class="text-center">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-headset"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Get Support</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Connect with our support team for assistance with orders, suppliers, or platform-related questions.
+        </p>
+        <div class="text-center">
+          <button class="action-link" onclick="openSupportChat()">
+            Contact Support <i class="fas fa-comments"></i>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Secondary Features - Second Row -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+      <!-- Account Management -->
+      <div class="feature-card rounded-2xl p-8 scroll-animate">
+        <div class="text-center">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-user-cog"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Account Settings</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Manage your profile, business information, preferences, and account security settings.
+        </p>
+        <div class="text-center">
+          <button class="action-link" onclick="openAccountSettings()">
+            Manage Account <i class="fas fa-cog"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loyalty Rewards -->
+      <div class="feature-card rounded-2xl p-8 scroll-animate">
+        <div class="text-center">
+          <div class="feature-icon mx-auto">
+            <i class="fas fa-gift"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-semibold mb-4 text-gray-900 text-center">Loyalty Rewards</h3>
+        <p class="mb-8 text-gray-600 leading-relaxed text-center">
+          Earn points on every order and unlock exclusive benefits. Build loyalty and get rewarded for your business.
+        </p>
+        <div class="text-center">
+          <button class="action-link" onclick="viewRewards()">
+            View Rewards <i class="fas fa-star"></i>
+          </button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-green-700 via-green-800 to-green-900 text-white text-center py-8 mt-16 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+    <div class="relative max-w-7xl mx-auto px-6">
+      <p class="text-lg font-medium">&copy; 2025 <strong>Sanchay</strong></p>
+      <p class="text-sm mt-2 text-green-200">Empowering businesses through intelligent procurement</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Application State
+    let userStats = {
+      orders: 0,
+      suppliers: 0,
+      monthlyVolume: 0,
+      notifications: 0
+    };
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeScrollAnimations();
+      loadUserData();
+      setupEventListeners();
+    });
+
+    // Scroll animation observer
+    function initializeScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.scroll-animate').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // Load user data (would typically come from an API)
+    function loadUserData() {
+      // Simulate API call
+      setTimeout(() => {
+        fetchUserStats();
+      }, 1000);
+    }
+
+    // Fetch user statistics
+    function fetchUserStats() {
+      // In a real application, this would be an API call
+      // For now, we'll keep stats hidden until real data is available
+      console.log('Statistics would be loaded from server');
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      document.getElementById('notificationBtn').addEventListener('click', handleNotificationClick);
+    }
+
+    // Navigation functions
+    function navigateToSuppliers() {
+      showLoadingState();
+      showNotification('Redirecting to supplier directory...', 'info');
+      setTimeout(() => {
+        // In a real app, this would navigate to suppliers page
+        console.log('Navigate to suppliers page');
+        hideLoadingState();
+      }, 1500);
+    }
+
+    function startOrderProcess() {
+      showLoadingState();
+      showNotification('Loading order form...', 'info');
+      setTimeout(() => {
+        // In a real app, this would open order creation flow
+        console.log('Open order creation form');
+        hideLoadingState();
+      }, 1500);
+    }
+
+    function openSupportChat() {
+      showNotification('Connecting to support team...', 'info');
+      setTimeout(() => {
+        // In a real app, this would open chat widget or support page
+        console.log('Open support chat');
+      }, 1000);
+    }
+
+    function openAccountSettings() {
+      showLoadingState();
+      showNotification('Loading account settings...', 'info');
+      setTimeout(() => {
+        // In a real app, this would navigate to account settings
+        console.log('Navigate to account settings');
+        hideLoadingState();
+      }, 1500);
+    }
+
+    function viewRewards() {
+      showLoadingState();
+      showNotification('Loading rewards dashboard...', 'info');
+      setTimeout(() => {
+        // In a real app, this would navigate to rewards page
+        console.log('Navigate to rewards dashboard');
+        hideLoadingState();
+      }, 1500);
+    }
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification px-6 py-4 rounded-lg shadow-lg max-w-sm ${
+        type === 'success' ? 'bg-green-500 text-white' : 
+        type === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+      }`;
+      
+      notification.innerHTML = `
+        <div class="flex items-start">
+          <i class="fas ${
+            type === 'success' ? 'fa-check-circle' : 
+            type === 'error' ? 'fa-exclamation-circle' : 
+            'fa-info-circle'
+          } mr-3 mt-1"></i>
+          <div class="flex-1">
+            <p class="text-sm font-medium">${message}</p>
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white/70 hover:text-white">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.remove();
+            }
+          }, 300);
+        }
+      }, 4000);
+    }
+
+    // Notification handling
+    function handleNotificationClick() {
+      if (userStats.notifications > 0) {
+        showNotification(`You have ${userStats.notifications} notifications`, 'info');
+      } else {
+        showNotification('No new notifications', 'info');
+      }
+    }
+
+    // Loading states
+    function showLoadingState() {
+      document.body.style.cursor = 'wait';
+    }
+
+    function hideLoadingState() {
+      document.body.style.cursor = 'default';
+    }
+
+    // Logout functionality
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        showNotification('Signing out...', 'info');
+        setTimeout(() => {
+          // In a real app, this would clear session and redirect
+          console.log('User logged out');
+          window.location.href = '/login';
+        }, 1500);
+      }
+    }
+
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Welcome message
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        showNotification('Welcome to Sanchay Vendor Portal', 'success');
+      }, 800);
+    });
+  </script>
+</body>
+</html>

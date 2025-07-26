@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delivery Tracking</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      color: #333;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background elements */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: float 25s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+      position: relative;
+      overflow: hidden;
+      animation: slideDown 0.8s ease-out;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .section-subtitle {
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    /* Table Container */
+    .table-container {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      border: 2px solid #f0f9ff;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out 0.6s both;
+      transition: all 0.3s ease;
+    }
+
+    .table-container:hover {
+      box-shadow: 0 15px 50px rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Table */
+    .tracking-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .tracking-table thead {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .tracking-table th {
+      padding: 1.5rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    .tracking-table th:first-child {
+      border-top-left-radius: 20px;
+    }
+
+    .tracking-table th:last-child {
+      border-top-right-radius: 20px;
+    }
+
+    .tracking-table tbody tr {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .tracking-table tbody tr:hover {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      transform: scale(1.01);
+      box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.1);
+    }
+
+    .tracking-table tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .tracking-table tbody tr:nth-child(even):hover {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    }
+
+    .tracking-table td {
+      padding: 1.2rem 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: #1f2937;
+      font-size: 1rem;
+    }
+
+    .customer-name {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .product-name {
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    /* Status Icons */
+    .status-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-completed {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+
+    .status-in-progress {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      animation: spin 2s linear infinite;
+    }
+
+    .status-not-started {
+      background: #e5e7eb;
+      color: #9ca3af;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Legend */
+    .legend {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #f8fffe, #f0fdf4);
+      border-radius: 16px;
+      border: 1px solid #d1fae5;
+      animation: fadeInUp 0.8s ease-out 0.8s both;
+    }
+
+    .legend-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-items {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    /* Floating shapes */
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .shape {
+      position: absolute;
+      opacity: 0.05;
+      color: #10b981;
+      font-size: 2rem;
+      animation: floatUpDown 8s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) {
+      top: 15%;
+      left: 8%;
+      animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+      top: 60%;
+      right: 12%;
+      animation-delay: 2.5s;
+    }
+
+    .shape:nth-child(3) {
+      bottom: 25%;
+      left: 15%;
+      animation-delay: 5s;
+    }
+
+    .shape:nth-child(4) {
+      top: 40%;
+      right: 25%;
+      animation-delay: 7.5s;
+    }
+
+    @keyframes floatUpDown {
+      0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        opacity: 0.05;
+      }
+      50% { 
+        transform: translateY(-25px) rotate(180deg); 
+        opacity: 0.08;
+      }
+    }
+
+    /* Animations */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Row animations */
+    .table-row {
+      animation: slideInLeft 0.6s ease-out;
+    }
+
+    .table-row:nth-child(1) { animation-delay: 0.1s; }
+    .table-row:nth-child(2) { animation-delay: 0.2s; }
+    .table-row:nth-child(3) { animation-delay: 0.3s; }
+    .table-row:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Progress indicator */
+    .progress-indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+      width: 0;
+      transition: width 2s ease-in-out;
+    }
+
+    .tracking-table tbody tr:hover .progress-indicator {
+      width: 100%;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .tracking-table th,
+      .tracking-table td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.85rem;
+      }
+      
+      .legend-items {
+        gap: 1rem;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Loading states */
+    .loading {
+      animation: loading 1.5s ease-in-out infinite;
+    }
+
+    @keyframes loading {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .tooltip:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating background shapes -->
+  <div class="floating-shapes">
+    <div class="shape"><i class="fas fa-truck"></i></div>
+    <div class="shape"><i class="fas fa-box"></i></div>
+    <div class="shape"><i class="fas fa-shipping-fast"></i></div>
+    <div class="shape"><i class="fas fa-check-circle"></i></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <h1><i class="fas fa-route"></i> Delivery Tracking</h1>
+    <p>Real-time order status and delivery updates</p>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <h2 class="section-title">Track Your Orders</h2>
+    <p class="section-subtitle">Monitor the progress of all your deliveries in real-time</p>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      <table class="tracking-table">
+        <thead>
+          <tr>
+            <th><i class="fas fa-hashtag"></i> Order ID</th>
+            <th><i class="fas fa-user"></i> Customer</th>
+            <th><i class="fas fa-box-open"></i> Product</th>
+            <th style="text-align: center;"><i class="fas fa-archive"></i> Packed</th>
+            <th style="text-align: center;"><i class="fas fa-shipping-fast"></i> Shipped</th>
+            <th style="text-align: center;"><i class="fas fa-home"></i> Delivered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr class="table-row">
+            <td>
+              <div class="progress-indicator"></div>
+              <div class="order-id">#100245</div>
+            </td>
+            <td class="customer-name">Aman Singh</td>
+            <td class="product-name">Custom T-shirt</td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Packed successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Shipped on time">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-in-progress tooltip" data-tooltip="Out for delivery">
+                <i class="fas fa-clock"></i>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr class="table-row">
+            <td>
+              <div class="progress-indicator"></div>
+              <div class="order-id">#100246</div>
+            </td>
+            <td class="customer-name">Sneha More</td>
+            <td class="product-name">Team Hoodie</td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Packed successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-in-progress tooltip" data-tooltip="Being processed">
+                <i class="fas fa-clock"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-not-started tooltip" data-tooltip="Waiting for shipment">
+                <i class="fas fa-minus"></i>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 3 -->
+          <tr class="table-row">
+            <td>
+              <div class="progress-indicator"></div>
+              <div class="order-id">#100247</div>
+            </td>
+            <td class="customer-name">Raj Thakur</td>
+            <td class="product-name">Event Jackets</td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Packed successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Shipped successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Delivered successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 4 -->
+          <tr class="table-row">
+            <td>
+              <div class="progress-indicator"></div>
+              <div class="order-id">#100248</div>
+            </td>
+            <td class="customer-name">Priya Nair</td>
+            <td class="product-name">Custom Tote Bag</td>
+            <td style="text-align: center;">
+              <div class="status-icon status-in-progress tooltip" data-tooltip="Currently packing">
+                <i class="fas fa-clock"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-not-started tooltip" data-tooltip="Waiting for packing">
+                <i class="fas fa-minus"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-not-started tooltip" data-tooltip="Waiting for shipment">
+                <i class="fas fa-minus"></i>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Row 5 -->
+          <tr class="table-row">
+            <td>
+              <div class="progress-indicator"></div>
+              <div class="order-id">#100249</div>
+            </td>
+            <td class="customer-name">Arjun Patel</td>
+            <td class="product-name">Sports Jersey</td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Packed successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-completed tooltip" data-tooltip="Shipped successfully">
+                <i class="fas fa-check"></i>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div class="status-icon status-in-progress tooltip" data-tooltip="Out for delivery">
+                <i class="fas fa-clock"></i>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-title">
+        <i class="fas fa-info-circle"></i>
+        Status Legend
+      </div>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="status-icon status-completed" style="width: 1.5rem; height: 1.5rem; font-size: 0.8rem;">
+            <i class="fas fa-check"></i>
+          </div>
+          <span>Completed</span>
+        </div>
+        <div class="legend-item">
+          <div class="status-icon status-in-progress" style="width: 1.5rem; height: 1.5rem; font-size: 0.8rem;">
+            <i class="fas fa-clock"></i>
+          </div>
+          <span>In Progress</span>
+        </div>
+        <div class="legend-item">
+          <div class="status-icon status-not-started" style="width: 1.5rem; height: 1.5rem; font-size: 0.8rem;">
+            <i class="fas fa-minus"></i>
+          </div>
+          <span>Not Started</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Add interactive features
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add stagger animation to table rows
+      const rows = document.querySelectorAll('.table-row');
+      rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+      });
+
+      // Simulate real-time updates
+      setTimeout(() => {
+        updateOrderStatus();
+      }, 3000);
+    });
+
+    function updateOrderStatus() {
+      // Simulate status change for demo
+      const progressIcons = document.querySelectorAll('.status-in-progress');
+      if (progressIcons.length > 0) {
+        const randomIcon = progressIcons[Math.floor(Math.random() * progressIcons.length)];
+        setTimeout(() => {
+          randomIcon.className = 'status-icon status-completed tooltip';
+          randomIcon.innerHTML = '<i class="fas fa-check"></i>';
+          randomIcon.setAttribute('data-tooltip', 'Just completed!');
+          
+          // Add celebration effect
+          randomIcon.style.animation = 'pulse 0.5s ease-in-out 3';
+        }, 1000);
+      }
+    }
+
+    // Add click interactions for status icons
+    document.querySelectorAll('.status-icon').forEach(icon => {
+      icon.addEventListener('click', function() {
+        this.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 200);
+      });
+    });
+
+    // Add hover effect for table rows
+    document.querySelectorAll('.tracking-table tbody tr').forEach(row => {
+      row.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.15)';
+      });
+      
+      row.addEventListener('mouseleave', function() {
+        this.style.boxShadow = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
